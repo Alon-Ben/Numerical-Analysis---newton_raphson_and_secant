@@ -1,0 +1,95 @@
+import math
+
+from sympy import lambdify, symbols, diff
+
+
+def secant(f, range1, eps):
+    def secant_method(f, range2):
+        def deff(xr_prev, xr, fx):
+            return (xr_prev * f(xr) - xr * f(xr_prev)) / (f(xr) - f(xr_prev))
+
+        xr_prev = range2[0]
+
+        xr = range2[1]
+
+        i = 0
+        while True:
+            i = i + 1
+            tepm = xr_prev
+
+            xr_prev = xr
+
+            xr = deff(tepm, xr, f)
+
+            if abs(xr - xr_prev) < eps:
+                print("Numbers of Iterations: " + str(i))
+                return xr, i
+
+    def secant_scan(f, range1):
+        jump = 0.0001
+        x2 = range1[0]
+        y2 = f(x2)
+
+        ret = []
+        ret_numbers = []
+
+        n = 0
+        while x2 <= range1[1]:
+            n = n + 1
+            # print(" ... " + str(x2))
+            x1 = x2
+            y1 = y2
+
+            x2 += jump
+            y2 = f(x2)
+
+            if y1 * y2 < 0:
+                # print(str(x1)+" , "+str(x2))
+                nrt, i = secant_method(f, (x1, x2))
+                message = "Numbers of Iterations: " + str(i + n)
+
+                ret.append(nrt)
+                ret_numbers.append(message)
+
+        return ret, ret_numbers
+
+    roots, roots_numbers = secant_scan(f, range1)
+
+    if len(roots) > 0:
+        print("The roots are:")
+        for i in range(len(roots)):
+            print("%.11f" % roots[i])
+            print(roots_numbers[i])
+    else:
+        print("There is no roots.")
+
+
+def main():
+    eps = 10 ** -10
+
+    # def f(x):
+    #     return x ** 3 - x - 1
+    print(" x ** 4 + x ** 3 - 3 * (x ** 2) ")
+
+    def f(x):
+        return x ** 4 + x ** 3 - 3 * (x ** 2)
+
+    start = -11
+    end = 10
+    range1 = (start, end)
+    secant(f, range1, eps)
+    print("__________________________\n")
+
+    print("x ** 3 - x - 1")
+
+    def f(x):
+        return x ** 3 - x - 1
+
+    start = 1
+    end = 2
+    range1 = (start, end)
+    secant(f, range1, eps)
+    print("__________________________\n")
+
+
+main()
